@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -18,7 +17,7 @@ public class Ball : MonoBehaviour
     private void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
-    }
+    }   
 
     // проверка на столкновения
     private void OnCollisionEnter2D(Collision2D collision)
@@ -36,14 +35,19 @@ public class Ball : MonoBehaviour
         // если шарик падает на пол, то уничтожается
         if (collision.gameObject.CompareTag("DeadZone"))
         {
+            GameController.Instance.BallCounter();
             Destroy(gameObject);
         }
-        // счётчик рикошетов
-        countRicochet++;
+        if (!collision.gameObject.GetComponent<Ball>())
+        {
+            // счётчик рикошетов
+            countRicochet++;
+        }
         
         // если рикошетов = макс количство, то уничтожаем шарик
         if (countRicochet == maxRicochet)
         {
+            GameController.Instance.BallCounter();
             Destroy(gameObject);            
         }
     }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -14,31 +12,51 @@ public class VisualComponent : MonoBehaviour
     private Color armoredСolor = new Color(0.2529369f, 0.4958034f, 0.7660377f);
     // цыет неразрушаемого блока
     private Color proofColor = Color.grey;
+    // цвет врага
+    private Color enemyColor = Color.red;
+
+    private Entities entities;
 
     private const string empty = " ";
     // инициализирует компоненты: текст и отображение
-    private void OnEnable()
+    private void Awake()
     {
         textHP = GetComponentInChildren<TextMeshProUGUI>();
         spriteRend = GetComponent<SpriteRenderer>();
-    }    
+        
+    }
+    private void Start()
+    {
+        entities = GetComponentInChildren<Entities>();
+        if (entities != null)
+        {
+            if (entities.proof)
+            {
+                //textHP.text = " ";
+                Transform child = transform.GetChild(0);
+                if (child != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
+    }
     // текст, который отображает HP или броню на блоках и врагах
     public void SetHPText(int _hp)
     {
-        if (_hp >= 0)
-        {
+        //if (!_proof)
+        //{
             textHP.text = _hp.ToString();
-        }
-        else
-        {
-            //textHP.text = empty;
-            Transform child = transform.GetChild(0);
-            if (child != null)
-            {
-                Destroy(child.gameObject);
-            }
+        //}
+        //else
+        //{
+        //    Transform child = transform.GetChild(0);
+        //    if (child != null)
+        //    {
+        //        Destroy(child.gameObject);
+        //    }
 
-        }
+        //}
     }
 
     // _status блока: 0 - неразрушаемый, 1 - разрушаемый, 2 - бронированный
@@ -56,14 +74,10 @@ public class VisualComponent : MonoBehaviour
             case 2:
                 spriteRend.color = armoredСolor;
                 break;
+            case 3:
+                spriteRend.color = enemyColor;
+                break;
 
         }
-    }
-     
-    // с помощью этого метода можно динамически менять спрайт на блоках и врагах
-    // например при загрузке уровня, это просто как вариант, на будущее, когда будет Арт для игры
-    //public void SetSprite(Sprite _sprite)
-    //{        
-    //    spriteRend.sprite = _sprite;
-    //}
+    }    
 }

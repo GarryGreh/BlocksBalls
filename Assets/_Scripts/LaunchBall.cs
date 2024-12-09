@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,18 +26,19 @@ public class LaunchBall : MonoBehaviour
     // позиция курсора для запуска шарика
     private Vector3 launchPos;
 
-    private GameManager gameManager;
+    private GameController gameControll;
     private Player player;
 
     private float offset = -90;
 
     private void Start()
     {
-        if (gameManager == null)
-        gameManager = FindObjectOfType<GameManager>();
+        if (gameControll == null)
+            gameControll = FindObjectOfType<GameController>();
 
         if(player == null) 
             player = GetComponent<Player>();
+        GameController.Instance.GetNumberBalls(shootPerTurn);
     }
 
     private void Update()
@@ -82,8 +84,8 @@ public class LaunchBall : MonoBehaviour
             countShoot++;
             if (countShoot >= shootPerTurn)
             {
-                gameManager.TheMoveEnded();
-                player.ChangePosition();
+                //gameControll.TheMoveEnded();
+                //player.ChangePosition();
                 countShoot = 0;
             }
             yield return new WaitForSeconds(shootInterval);

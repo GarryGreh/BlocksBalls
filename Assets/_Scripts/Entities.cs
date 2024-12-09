@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent (typeof(VisualComponent))]
@@ -9,30 +7,41 @@ public abstract class Entities : MonoBehaviour
     public int armor = 0;
     public bool proof = false;
     public bool isArmored = false;
+    public bool isEnemy = false;
 
     private VisualComponent visual;
 
-    private void Start()
+    public virtual void Start()
     {
-        visual = GetComponent<VisualComponent>();
+        visual = GetComponent<VisualComponent>();        
 
-        if (!proof)
+        // здесь определяется какая сущность враг или блок, разрушаемый блок или нет, с бронёй или нет
+        // потом передаётся информация в компонент визуализации
+        if (!isEnemy)
         {
-            if (isArmored)
+            if (!proof)
             {
-                visual.SetHPText(armor);
-                visual.SetColor(2);
+                if (isArmored)
+                {
+                    visual.SetHPText(armor);
+                    visual.SetColor(2);
+                }
+                else
+                {
+                    visual.SetHPText(hp);
+                    visual.SetColor(1);
+                }
             }
             else
             {
-                visual.SetHPText(hp);
-                visual.SetColor(1);
+                visual.SetHPText(-1);
+                visual.SetColor(0);
             }
         }
         else
         {
-            visual.SetHPText(-1);
-            visual.SetColor(0);
+            visual.SetHPText(hp);
+            visual.SetColor(3);
         }
     }
 
@@ -59,13 +68,19 @@ public abstract class Entities : MonoBehaviour
                 return;
             }
             else
-            {
-                visual.SetColor(1);
+            {                
                 hp -= damage;
-                visual.SetHPText(hp);
                 if (hp <= 0)
                 {
-                    Destroy(gameObject);
+                    if (isEnemy)
+                    {
+                        GetComponent<EnemyShot>().Unsubscribe();
+                    }
+                    Destroy(this.gameObject);
+                }
+                else
+                {
+                    visual.SetHPText(hp);
                 }
             }
         }
